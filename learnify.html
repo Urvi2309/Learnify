@@ -1,0 +1,243 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(EnglishGujaratiQuiz());
+}
+
+class EnglishGujaratiQuiz extends StatelessWidget {
+  const EnglishGujaratiQuiz({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: ChaptersPage(),
+    );
+  }
+}
+
+// ignore: use_key_in_widget_constructors
+class ChaptersPage extends StatelessWidget {
+  final List<Map<String, List<String>>> chapters = [
+    {
+      "Vegetables": [
+        "Carrot - ગાજર",
+        "Potato - બટાકા",
+        "Tomato - ટામેટું",
+        "Cucumber - કાકડી",
+        "Beetroot - બીટ",
+        "Radish - મૂળા",
+        "Cauliflower - ફૂલગોબી",
+        "Cabbage - કોબી",
+        "Onion - ડુંગળી",
+        "Garlic - લસણ",
+        "Ginger - આદુ",
+        "Peas - વટાણા",
+        "Bell pepper - શિમલા મરચું",
+        "Eggplant - રીંગણ"
+      ]
+    },
+    {
+      "Colors": [
+        "Red - લાલ",
+        "Blue - વાદળી",
+        "Green - લીલું",
+        "Yellow - પીળું",
+        "Orange - નારંગી",
+        "Purple - જાંબુડિયો",
+        "Pink - ગુલાબી",
+        "Black - કાળો",
+        "White - સફેદ",
+        "Brown - ભૂખરો"
+      ]
+    },
+    {
+      "Fruits": [
+        "Apple - સફરજન",
+        "Banana - કેળું",
+        "Mango - કેરી",
+        "Grapes - દ્રાક્ષ",
+        "Orange - સંતરા",
+        "Papaya - પપૈયા",
+        "Watermelon - તરબૂચ",
+        "Strawberry - જામફળ",
+        "Grapes - દ્રાક્ષ",
+        "Pineapple - અનનાસ",
+        "Cherry - ચેરી",
+        "Pomegranate - દાડમ",
+        "Plum - આલુબુખારા",
+        "Guava - જામફળ"
+      ]
+    },
+    {
+      "Birds": [
+        "Peacock - મોર",
+        "Sparrow - ચકલી",
+        "Pigeon - કબૂતર",
+        "Parrot - પોપટ",
+        "Crow - કાગડો",
+        "Owl - ઉલુ",
+        "Pigeon - કબૂતર ",
+        "Duck - બતક",
+        "Goose - હંસ"
+      ]
+    },
+    {
+      "Animals": [
+        "Lion - સિંહ",
+        "Tiger - વાઘ",
+        "Elephant - હાથી",
+        "Dog - કૂતરો",
+        "Monkey - વાનર",
+        "Bear - રીંછ ",
+        "Cat - બિલાડી",
+        "Cow - ગાય",
+        "Buffalo - ભેંસ"
+      ]
+    },
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("English to Gujarati Learning")),
+      body: ListView.builder(
+        itemCount: chapters.length,
+        itemBuilder: (context, index) {
+          String chapterName = chapters[index].keys.first;
+          List<String> words = chapters[index][chapterName]!;
+          return Card(
+            margin: EdgeInsets.all(10),
+            child: Padding(
+              padding: EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(chapterName,
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 10),
+                  ...words.map(
+                      (word) => Text(word, style: TextStyle(fontSize: 16))),
+                  SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => QuizPage(chapter: chapterName),
+                        ),
+                      );
+                    },
+                    child: Text("Start Quiz"),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class QuizPage extends StatefulWidget {
+  final String chapter;
+  // ignore: prefer_const_constructors_in_immutables
+  QuizPage({super.key, required this.chapter});
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _QuizPageState createState() => _QuizPageState();
+}
+
+class _QuizPageState extends State<QuizPage> {
+  int questionIndex = 0;
+  int score = 0;
+
+  final Map<String, List<Map<String, dynamic>>> quizData = {
+    "Vegetables": [
+      {
+        "question": "Carrot",
+        "options": ["ગાજર", "બટાકા", "કાકડી", "ટામેટું"],
+        "answer": "ગાજર"
+      },
+      {
+        "question": "Potato",
+        "options": ["બટાકા", "લીંબૂ", "ભીંડા", "કોબી"],
+        "answer": "બટાકા"
+      },
+    ],
+    "Colors": [
+      {
+        "question": "Red",
+        "options": ["લાલ", "લીલુ", "વાદળી", "પીળું"],
+        "answer": "લાલ"
+      },
+      {
+        "question": "Blue",
+        "options": ["લીલુ", "લાલ", "પીળું", "વાદળી"],
+        "answer": "વાદળી"
+      },
+    ],
+    // Add more chapters (Fruits, Birds, Animals) with questions here
+  };
+
+  void _checkAnswer(String selectedOption) {
+    if (selectedOption == quizData[widget.chapter]![questionIndex]["answer"]) {
+      score++;
+    }
+    setState(() {
+      if (questionIndex < quizData[widget.chapter]!.length - 1) {
+        questionIndex++;
+      } else {
+        _showScore();
+      }
+    });
+  }
+
+  void _showScore() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Quiz Completed!"),
+        content: Text("Your score: $score/${quizData[widget.chapter]!.length}"),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            child: Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("${widget.chapter} Quiz")),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Text(
+              "${quizData[widget.chapter]![questionIndex]["question"]} means?",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 20),
+            ...quizData[widget.chapter]![questionIndex]["options"]
+                .map<Widget>((option) {
+              return ElevatedButton(
+                onPressed: () => _checkAnswer(option),
+                child: Text(option),
+              );
+            }).toList(),
+          ],
+        ),
+      ),
+    );
+  }
+}
